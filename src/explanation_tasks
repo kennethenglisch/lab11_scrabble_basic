@@ -26,6 +26,8 @@ or
 
 Word list from: https://github.com/powerlanguage/word-lists
 
+Better list: https://drive.google.com/file/d/1oGDf1wjWp5RF_X9C7HoedhIWMh5uJs8s/view
+
 Tasks:
 
 1. Write a dictionary class that upon instantiation reads in a file of words and creates a hash table for storing them. 
