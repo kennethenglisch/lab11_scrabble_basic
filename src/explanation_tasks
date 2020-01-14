@@ -1,0 +1,42 @@
+h("word") = value('w') + value('o') + value('r') + value('d')
+
+or something similar
+
+value('a') is 97
+
+Normalize!! 
+
+-> all caps / all smalls
+-> sort letters?
+
+--------------------------
+
+-> Use an array with LinkedList inside that holds the words
+
+or 
+
+-> HashMap(Integer, List<String>)
+
+----> Integer = gesamtes Value von allen Buchstaben 
+---> all words with the same value get put in the same List
+
+
+
+----------------------------------------
+
+Word list from: https://github.com/powerlanguage/word-lists
+
+Tasks:
+
+1. Write a dictionary class that upon instantiation reads in a file of words and creates a hash table for storing them. 
+   Use chaining of collisions in your hash table. How many entries does your table have? How many collisions were there? 
+   What is the longest chain in your hash table? It might be useful to implement some statistical methods in order to see if your hash table is "okay". 
+   Can you fix your hash function in order to only have chains of 16 or less?
+   
+   
+2. You will need to have a lookup method in your class that takes a word (i.e. a String) and returns an array of Strings corresponding to all the words at the hash location, if any. 
+   You may need to normalize the word to look up, depending on your hash function.
+   
+   
+3. Now make the basic Scrabble cheater: construct a 7-letter-word hash dictionary, set a String to 7 letters, and output the array of Strings found that might be permutations of these 7 letters. 
+   Your users can check if there is a permutation to be found. Or you can implement isPermutation and only output the ones that are permutations if you are bored.
