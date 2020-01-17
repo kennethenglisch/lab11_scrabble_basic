@@ -14,20 +14,28 @@ import java.util.regex.*;
 
 public class Dictionary {
 
-	public Hashtable<Set<Integer>, LinkedList<String>> dictionary;
+	public Hashtable<String, LinkedList<String>> dictionary;
 	public HashMap<Integer, ArrayList<String>> dictionary_map;
 //	private File words_file;
 	private Scanner scanner;
+	private int maxSize = 68687;
 
 	public static void main(String[] args) {
+		long startTime = System.nanoTime();
+
 		new Dictionary();
+
+		long endTime = System.nanoTime();
+		long duration = endTime - startTime;
+		System.out.println(duration);
+		
 	}
 
 	public Dictionary() {
 //		readFile("./word-list-master/common-7-letter-words.txt");
 //		readFile("/Users/kenneth/eclipse-workspace/lab11-scrabble-basic/word-lists-master/common-7-letter-words.txt");
 
-		dictionary = new Hashtable<Set<Integer>, LinkedList<String>>();
+		dictionary = new Hashtable<String, LinkedList<String>>();
 		dictionary_map = new HashMap<Integer, ArrayList<String>>();
 		readFile("./collins-scrabble-words.txt");
 //		fillMap();
@@ -98,9 +106,8 @@ public class Dictionary {
 			word = word.toLowerCase();
 
 			if (word.matches(regex_7_letters)) {
-				Set<Integer> value = new HashSet<>();
-				value = getNumericValue(word);
-
+				String value = quicksortWord(word);
+				
 				// getting and remembering the value of the word in the list
 				LinkedList<String> dic_words = dictionary.get(value);
 
@@ -133,12 +140,10 @@ public class Dictionary {
 			word = word.toLowerCase();
 
 			if (validString(word)) {
-				Set<Integer> keySet = new HashSet<>();
-				keySet = getNumericValue(word);
-				int key = keySet.hashCode();				
+				String key = quicksortWord(word);	
 
 				// getting and remembering the value of the word in the list
-				LinkedList<String> dic_words = dictionary.get(keySet);
+				LinkedList<String> dic_words = dictionary.get(key);
 
 				if (dic_words == null) {
 					// creating a new ArrayList<String>
@@ -149,11 +154,11 @@ public class Dictionary {
 
 					// putting the ArrayList into the dictionary hash table with numericValue of
 					// word as key
-					dictionary.put(keySet, words_list);
+					dictionary.put(key, words_list);
 				} else {
 					if (!dic_words.contains(word)) {
 						dic_words.addFirst(word);
-						dictionary.put(keySet, dic_words);
+						dictionary.put(key, dic_words);
 					}
 				}
 				counter++;
@@ -161,15 +166,16 @@ public class Dictionary {
 		}
 		System.out.println(counter);
 	}
+	
 
-	private Set<Integer> getNumericValue(String word) {
-		Set<Integer> charValue = new HashSet<>();
+	private int getNumericValue(String word) {
+		int value = 0;
 
 		for (int i = 0; i < word.length(); i++) {
-			charValue.add(Character.getNumericValue(word.charAt(i)));
+			value += (Character.getNumericValue(word.charAt(i)));
 		}
 
-		return charValue;
+		return value;
 	}
 
 	/**
@@ -189,7 +195,7 @@ public class Dictionary {
 	}
 
 	private boolean validString(String str) {
-		return ((!str.equals("")) && (str != null) && (str.matches("^[a-z]*$"))) && (str.length() <= 7);
+		return ((!str.equals("")) && (str != null) && (str.matches("^[a-z]*$"))) && (str.length() == 7);
 	}
 
 	private String[] searchForWord(String search_word) {
@@ -200,7 +206,7 @@ public class Dictionary {
 			return null;
 		}
 
-		Set value = getNumericValue(search_word);
+		int value = getNumericValue(search_word);
 
 		String[] words;
 
@@ -233,7 +239,7 @@ public class Dictionary {
 		for (int i = 0; i < characters.length; i++)
 			System.out.println(characters[i]);
 
-		quicksort(characters, 0, 6);
+		quicksort(characters, 0, word.length()-1);
 
 		String new_word = "";
 		System.out.println("Ordered");
