@@ -18,7 +18,7 @@ public class Dictionary {
 	public HashMap<Integer, ArrayList<String>> dictionary_map;
 //	private File words_file;
 	private Scanner scanner;
-	private int maxSize = 68687;
+	private final int MAX_SIZE = 68687;
 
 	public static void main(String[] args) {
 		long startTime = System.nanoTime();
@@ -195,13 +195,13 @@ public class Dictionary {
 	}
 
 	private boolean validString(String str) {
-		return ((!str.equals("")) && (str != null) && (str.matches("^[a-z]*$"))) && (str.length() == 7);
+		return ((!str.equals("")) && (str != null) && (str.matches("\\b[a-z]{7}\\b")));
 	}
 
 	private String[] searchForWord(String search_word) {
 		search_word = search_word.toLowerCase();
 
-		if (search_word.length() != 7) {
+		if (!search_word.matches("\\b[a-z]{7}\\b")) {
 			System.out.println("You should enter a word that has exactly 7 letters.");
 			return null;
 		}
