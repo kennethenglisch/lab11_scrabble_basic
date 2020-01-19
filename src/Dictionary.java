@@ -1,16 +1,11 @@
-import java.io.CharConversionException;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
-import java.util.Map.Entry;
 import java.util.Scanner;
-import java.util.Set;
-import java.util.regex.*;
 
 public class Dictionary {
 
@@ -46,13 +41,17 @@ public class Dictionary {
 //		System.out.println(dictionary.size());
 
 
-		printWords(searchForWord("Perfect"));
+//		printWords(searchForWord("Perfectw"));
+		
+//		search("LACKERS");
+		search("eatings");
 	}
 
 	private void statistics() {
 		int largest = 1;
 		int position = 0;
 		int counter = 0;
+		String element = "";
 		Enumeration<LinkedList<String>> enu = dictionary.elements();
 
 		while (enu.hasMoreElements()) {
@@ -66,10 +65,11 @@ public class Dictionary {
 			if(Integer.compare(largest, list.size())<0) {
 				largest = list.size();	
 				position = counter;
+				element = list.getFirst();
 			}
 			counter++;
 		}
-		System.out.println("Largest chain: " + largest + " -> Key: " + position);
+		System.out.println("Largest chain: " + largest + " -> Key: " + position + " / " + element);
 	}
 
 	private void statisticsVer2() {
@@ -198,17 +198,24 @@ public class Dictionary {
 		return ((!str.equals("")) && (str != null) && (str.matches(regex_7_letters)));
 	}
 
+	private void search(String search_word) 
+	{
+		String[] words = searchForWord(search_word);
+		
+		if (words != null)
+			printWords(words);
+	}
+	
 	private String[] searchForWord(String search_word) {
 		search_word = search_word.toLowerCase();
 
 		if (!search_word.matches(regex_7_letters)) {
-			System.out.println("You should enter a word that has exactly 7 letters.");
+			System.out.println("You should enter a word that has exactly 7 letters and does not contain a number, any special characters or a blank.");
 			return null;
 		}
 		
-		System.out.println("Searching Word: " + search_word);
+		System.out.println("Searching Word: " + search_word + "\n");
 		String new_word = quicksortWord(search_word);
-//		System.out.println("Still the same word? " + search_word);
 		
 		String[] words;
 		LinkedList<String> words_list = dictionary.get(new_word);
@@ -222,12 +229,16 @@ public class Dictionary {
 			words = new String[size];
 			
 			for (int i = 0; i < size; i++) 
-			{
 				words[i] = words_list.get(i);
-			}
 		}
-		
 		return words;
+	}
+	
+	private void printWords(String[] words) 
+	{
+		System.out.println("Found Words: \n");
+		for (int i = 0; i < words.length; i++)
+			System.out.println(words[i]);
 	}
 
 	private String quicksortWord(String word) {
@@ -255,13 +266,6 @@ public class Dictionary {
 //		System.out.println("New Word:" + new_word);
 
 		return new_word;
-	}
-	
-	private void printWords(String[] words) 
-	{
-		System.out.println("Found Words: ");
-		for (int i = 0; i < words.length; i++)
-			System.out.println(words[i]);
 	}
 
 	/**
