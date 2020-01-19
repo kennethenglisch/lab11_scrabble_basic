@@ -19,6 +19,7 @@ public class Dictionary {
 //	private File words_file;
 	private Scanner scanner;
 	private final int MAX_SIZE = 68687;
+	private String regex_7_letters = "\\b[a-z]{7}\\b";
 
 	public static void main(String[] args) {
 		long startTime = System.nanoTime();
@@ -40,16 +41,12 @@ public class Dictionary {
 		readFile("./collins-scrabble-words.txt");
 //		fillMap();
 		fillMapVer2();
-		statistics();
+//		statistics();
 //		statisticsVer2();
 //		System.out.println(dictionary.size());
 
-//		quicksortWord("Perfect");
 
-//		String[] words = searchForWord("PerfECt");
-
-//		for (int i = 0; i < words.length; i++)
-//			System.out.println(words[i]);
+		printWords(searchForWord("Perfect"));
 	}
 
 	private void statistics() {
@@ -91,7 +88,9 @@ public class Dictionary {
 	private void readFile(String pathname) {
 		try {
 			scanner = new Scanner(new File(pathname), StandardCharsets.UTF_8.name());
-			System.out.println("File reading successfully.");
+			System.out.println("------------------------------");
+			System.out.println("| File reading successfully. |");
+			System.out.println("------------------------------");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -99,7 +98,6 @@ public class Dictionary {
 
 	private void fillMap() {
 		int counter = 0;
-		String regex_7_letters = "\\b[a-z]{7}\\b";
 
 		while (scanner.hasNext()) {
 			String word = scanner.next();
@@ -129,7 +127,8 @@ public class Dictionary {
 			}
 		}
 
-		System.out.println(counter);
+		System.out.println("Words in the dictionary: " + counter);
+		System.out.println(">>>>>>>>>>>>><<<<<<<<<<<<<\n");
 	}
 
 	private void fillMapVer2() {
@@ -164,7 +163,8 @@ public class Dictionary {
 				counter++;
 			}
 		}
-		System.out.println(counter);
+		System.out.println("Words in the dictionary: " + counter);
+		System.out.println("<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>\n");
 	}
 	
 
@@ -195,34 +195,38 @@ public class Dictionary {
 	}
 
 	private boolean validString(String str) {
-		return ((!str.equals("")) && (str != null) && (str.matches("\\b[a-z]{7}\\b")));
+		return ((!str.equals("")) && (str != null) && (str.matches(regex_7_letters)));
 	}
 
 	private String[] searchForWord(String search_word) {
 		search_word = search_word.toLowerCase();
 
-		if (!search_word.matches("\\b[a-z]{7}\\b")) {
+		if (!search_word.matches(regex_7_letters)) {
 			System.out.println("You should enter a word that has exactly 7 letters.");
 			return null;
 		}
-
-		int value = getNumericValue(search_word);
-
+		
+		System.out.println("Searching Word: " + search_word);
+		String new_word = quicksortWord(search_word);
+//		System.out.println("Still the same word? " + search_word);
+		
 		String[] words;
-
-		LinkedList<String> words_list = dictionary.get(value);
-
-		if (words_list == null) {
+		LinkedList<String> words_list = dictionary.get(new_word);
+		
+		if (words_list == null) 
+		{
 			System.out.println("There is no word for you.");
 			return null;
 		} else {
 			int size = words_list.size();
 			words = new String[size];
-
-			for (int i = 0; i < size; i++)
+			
+			for (int i = 0; i < size; i++) 
+			{
 				words[i] = words_list.get(i);
+			}
 		}
-
+		
 		return words;
 	}
 
@@ -230,27 +234,34 @@ public class Dictionary {
 		int length = word.length();
 		word = word.toLowerCase();
 		int[] characters = new int[length];
-		System.out.println("Word: " + word);
+//		System.out.println("Word: " + word);
 
 		for (int i = 0; i < length; i++)
 			characters[i] = word.charAt(i);
 
-		System.out.println("Non ordered");
-		for (int i = 0; i < characters.length; i++)
-			System.out.println(characters[i]);
+//		System.out.println("Non ordered");
+//		for (int i = 0; i < characters.length; i++)
+//			System.out.println(characters[i]);
 
 		quicksort(characters, 0, word.length()-1);
 
 		String new_word = "";
-		System.out.println("Ordered");
+//		System.out.println("Ordered");
 		for (int i = 0; i < characters.length; i++) {
-			System.out.println(characters[i]);
+//			System.out.println(characters[i]);
 			new_word += (char) (characters[i]);
 		}
 
-		System.out.println("New Word:" + new_word);
+//		System.out.println("New Word:" + new_word);
 
 		return new_word;
+	}
+	
+	private void printWords(String[] words) 
+	{
+		System.out.println("Found Words: ");
+		for (int i = 0; i < words.length; i++)
+			System.out.println(words[i]);
 	}
 
 	/**
