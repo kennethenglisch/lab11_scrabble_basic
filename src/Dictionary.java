@@ -1,56 +1,41 @@
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Scanner;
 
 public class Dictionary {
 
-	public Hashtable<String, LinkedList<String>> dictionary;
-	public HashMap<Integer, ArrayList<String>> dictionary_map;
+	private Hashtable<String, LinkedList<String>> dictionary;
 //	private File words_file;
 	private Scanner scanner;
-	private final int MAX_SIZE = 68687;
 	private String regex_7_letters = "\\b[a-z]{7}\\b";
 
 	public static void main(String[] args) {
 		long startTime = System.nanoTime();
-
 		new Dictionary();
-
 		long endTime = System.nanoTime();
 		long duration = endTime - startTime;
-		System.out.println(duration);
+		System.out.println("\nDuration: " + duration + " nano-seconds");
 		
 	}
 
 	public Dictionary() {
-//		readFile("./word-list-master/common-7-letter-words.txt");
-//		readFile("/Users/kenneth/eclipse-workspace/lab11-scrabble-basic/word-lists-master/common-7-letter-words.txt");
-
 		dictionary = new Hashtable<String, LinkedList<String>>();
-		dictionary_map = new HashMap<Integer, ArrayList<String>>();
 		readFile("./collins-scrabble-words.txt");
-//		fillMap();
-		fillMapVer2();
-//		statistics();
-//		statisticsVer2();
-//		System.out.println(dictionary.size());
-
-
-//		printWords(searchForWord("Perfectw"));
-		
+		fillMap();	
 //		search("LACKERS");
 		search("eatings");
 	}
 
-	private void statistics() {
+	private void statistics(int c, int d, int col) {
 		int largest = 1;
 		int position = 0;
 		int counter = 0;
+		int words = c;
+		int duplicates = d;
+		int collisions = col;
 		String element = "";
 		Enumeration<LinkedList<String>> enu = dictionary.elements();
 
@@ -69,15 +54,12 @@ public class Dictionary {
 			}
 			counter++;
 		}
-		System.out.println("Largest chain: " + largest + " -> Key: " + position + " / " + element);
-	}
-
-	private void statisticsVer2() {
-		System.out.println(dictionary_map.size());
-
-		dictionary_map.keySet().iterator()
-				.forEachRemaining(key -> System.out.println(key + "=" + dictionary_map.get(key)));
-
+		System.out.println("Words in the dictionary: " + words);
+		System.out.println("\nDuplicates found: " + duplicates);
+		System.out.println("\nSize of the Hashtable: " + counter);
+		System.out.println("\nCollisions appeared: " + collisions);
+		System.out.println("\nLargest chain: " + largest + " -> Key: " + position + " / " + element + "\n");
+		System.out.println("<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>\n");
 	}
 
 	/**
@@ -98,47 +80,14 @@ public class Dictionary {
 
 	private void fillMap() {
 		int counter = 0;
+		int duplicates = 0;
+		int collisions = 0;
 
 		while (scanner.hasNext()) {
 			String word = scanner.next();
 			word = word.toLowerCase();
 
 			if (word.matches(regex_7_letters)) {
-				String value = quicksortWord(word);
-				
-				// getting and remembering the value of the word in the list
-				LinkedList<String> dic_words = dictionary.get(value);
-
-				if (dic_words == null) {
-					// creating a new ArrayList<String>
-					LinkedList<String> words_list = new LinkedList<>();
-
-					// adding the word into this ArrayList
-					words_list.add(word);
-
-					// putting the ArrayList into the dictionary hash table with numericValue of
-					// word as key
-					dictionary.put(value, words_list);
-				} else {
-					dic_words.add(word);
-					dictionary.put(value, dic_words);
-				}
-				counter++;
-			}
-		}
-
-		System.out.println("Words in the dictionary: " + counter);
-		System.out.println(">>>>>>>>>>>>><<<<<<<<<<<<<\n");
-	}
-
-	private void fillMapVer2() {
-		int counter = 0;
-
-		while (scanner.hasNext()) {
-			String word = scanner.next();
-			word = word.toLowerCase();
-
-			if (validString(word)) {
 				String key = quicksortWord(word);	
 
 				// getting and remembering the value of the word in the list
@@ -158,45 +107,16 @@ public class Dictionary {
 					if (!dic_words.contains(word)) {
 						dic_words.addFirst(word);
 						dictionary.put(key, dic_words);
-					}
+						collisions++;
+					}else
+						duplicates++;
 				}
 				counter++;
 			}
 		}
-		System.out.println("Words in the dictionary: " + counter);
-		System.out.println("<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>\n");
-	}
-	
-
-	private int getNumericValue(String word) {
-		int value = 0;
-
-		for (int i = 0; i < word.length(); i++) {
-			value += (Character.getNumericValue(word.charAt(i)));
-		}
-
-		return value;
+		statistics(counter, duplicates, collisions);
 	}
 
-	/**
-	 * K(m) = k % m 
-	 * m = Anzahl der Wörter (34343 * 2) -> 68686 -> nächst größere
-	 * Primzahl -> m = 68687
-	 */
-	private int getNumericValueVer2(String word) {
-		int value = 0;
-		int length = word.length();
-
-		for (int i = 0, j = length - 1; i < length; i++, j--) {
-			value = (int) (value + ((Character.getNumericValue(word.charAt(i)) - 97) * Math.pow(26, j)));
-		}
-
-		return value * 100 % 68687;
-	}
-
-	private boolean validString(String str) {
-		return ((!str.equals("")) && (str != null) && (str.matches(regex_7_letters)));
-	}
 
 	private void search(String search_word) 
 	{
